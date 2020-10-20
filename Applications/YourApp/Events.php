@@ -66,7 +66,7 @@ class Events
 
            self::$eventHandler->{$method}($cmd);
        } catch (\Throwable $e) {
-           Gateway::sendToCurrentClient(Cmd::makeMessage(Cmd::ERROR, "出错啦 ".$e->getMessage()));
+           Gateway::sendToCurrentClient(Cmd::makeMessage(Cmd::ERROR, sprintf("出错啦 %s，错误码", $e->getMessage(), $e->getCode())));
        }
    }
    
