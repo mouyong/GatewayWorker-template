@@ -12,9 +12,21 @@ class MiniProgram
         return require_once __DIR__.'/config.php';
     }
 
-    public static function make(): Application
+    public static function app(): Application
     {
         return Factory::miniProgram(self::getConfig());
+    }
+
+    public static function make()
+    {
+        return new static();
+    }
+
+    public function code2Session(string $code)
+    {
+        $sessionRes = MiniProgram::app()->auth->session($code);
+        MiniProgram::checkResponse($sessionRes);
+        return $sessionRes;
     }
 
     public static function checkResponse(array $res)

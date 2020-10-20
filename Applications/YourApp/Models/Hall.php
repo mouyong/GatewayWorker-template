@@ -19,22 +19,26 @@ class Hall
 
     public function onLogin(Cmd $cmd)
     {
-        Gateway::sendToClient($cmd->getClientId(), "hello {$cmd->getClientId()}, you will go to hall");
-
-        $client = new Client();
-        $client->setClientId($cmd->getClientId());
-
         $payload = $cmd->getPayload();
 
-        $client->setPlayerId($payload['userInfo']['nickName']);
+        $app = MiniProgram::make();
+//        $sessionRes = $app->code2Session($payload['code']);
+        $sessionRes = [
+            'session_key' => 'TSy8dwWbKgaSO8YbI3mXUQ==',
+            'openid' => 'osc8CuGLHASSHiuUqgVEHS_BEGoA',
+        ];
 
+        // @see https://developers.weixin.qq.com/miniprogram/dev/api/open-api/user-info/UserInfo.html
+        $decryptData = $app::app()->encryptor->decryptData($sessionRes['session_key'], $payload['iv'], $payload['encryptedData']);
 
+        // 声明 client 信息
+        $client = new Client();
+        $client->setClientId($cmd->getClientId());
+        $client->setPlayerId($decryptData['openId']);
+
+        // 将 client 添加到大厅中
         $this->addClient($client);
 
-        $app = MiniProgram::make();
-
-        $sessionRes = $app->auth->session($payload['code']);
-        MiniProgram::checkResponse($sessionRes);
-
+        Gateway::sendToCurrentClient(Cmd::makeMessage(Cmd::LOGIN_RESP, "登录成功，您好 {$decryptData['nickName']}"));
     }
 }

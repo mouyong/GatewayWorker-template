@@ -6,11 +6,15 @@ use GatewayWorker\Lib\Gateway;
 
 class Cmd
 {
+    const CONNECT = 'connect';
+    const CLOSE = 'close';
+
+    // SYSTEM
     const ERROR = 'error';
     const SUCCESS = 'success';
 
-    const CONNECT = 'connect';
-    const CLOSE = 'close';
+    // Biz
+    const LOGIN_RESP = 'login.resp';
 
     private $cmd;
     private $payload;
