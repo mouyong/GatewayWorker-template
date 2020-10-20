@@ -10,10 +10,19 @@ class Hall
 {
     protected $clients = [];
 
+    protected $players = [];
+
     public function addClient(Client $client)
     {
         if (empty($this->clients[$client->getClientId()])) {
             $this->clients[$client->getClientId()] = $client;
+        }
+    }
+
+    public function addPlayer(Player $player)
+    {
+        if (empty($this->players[$player->getUid()])) {
+            $this->players[$player->getUid()] = $player;
         }
     }
 
@@ -34,10 +43,19 @@ class Hall
         // 声明 client 信息
         $client = new Client();
         $client->setClientId($cmd->getClientId());
-        $client->setPlayerId($decryptData['openId']);
+        $client->setUid($decryptData['openId']);
 
         // 将 client 添加到大厅中
         $this->addClient($client);
+
+        $player = new Player();
+        $player->setClientId($cmd->getClientId());
+        $player->setNickname($decryptData['nickName']);
+        $player->setUid($decryptData['openId']);
+
+        $this->addPlayer($player);
+
+        Gateway::bindUid($client->getClientId(), $player->getUid());
 
         Gateway::sendToCurrentClient(Cmd::makeMessage(Cmd::LOGIN_RESP, "登录成功，您好 {$decryptData['nickName']}"));
     }
