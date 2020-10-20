@@ -1,0 +1,7 @@
+.idea/
+vendor/
+!start_businessworker.php
+!start_gateway.php
+!start_register.php
+!Events.php
+!Cmd.php
